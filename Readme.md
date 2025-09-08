@@ -2,6 +2,8 @@
 
 This project is an ESP32-S3 based remote-controlled (RC) car that utilizes the ESP-NOW communication protocol for wireless control. The project is designed to provide a robust, low-latency, and efficient way to control an RC car using ESP32 microcontrollers.
 
+There is also a Autodesk Fusion Project Archive (ESP32 RC Car.f3d) which has the electronics I have used for this project.
+
 ## Features
 - **Platform:** ESP32-S3
 - **Wireless Protocol:** ESP-NOW (no WiFi router required)

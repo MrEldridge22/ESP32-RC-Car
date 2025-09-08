@@ -143,7 +143,46 @@ void receiverLoop() {
     Serial.println(motBValue);
   }
 
+  // Control Motor A
   // If motor A is a positive number then set INA1 and INA2  appropriately for forwards and drive PWMA at the MotorA value
+  if (motAValue > 0) {
+    digitalWrite(INA1, HIGH);
+    digitalWrite(INA2, LOW);
+    analogWrite(PWMA, motAValue);
+  } 
+  // If motor A is a negative number then set INA1 and INA2 appropriately for backwards and drive PWMA at the absolute MotorA value
+  else if (motAValue < 0) {
+    digitalWrite(INA1, LOW);
+    digitalWrite(INA2, HIGH);
+    analogWrite(PWMA, motAValue);
+  } 
+  else {
+    // Stop motor
+    digitalWrite(INA1, LOW);
+    digitalWrite(INA2, LOW);
+    analogWrite(PWMA, 0);
+  }
+
+  // Control Motor B
+  // If motor B is a positive number then set INB1 and INB2  appropriately for forwards and drive PWMB at the MotorB value
+  if (motBValue > 0) {
+    digitalWrite(INB1, HIGH);
+    digitalWrite(INB2, LOW);
+    analogWrite(PWMB, motBValue);
+  } 
+  // If motor B is a negative number going in reverse set INB1 and INB2 appropriately for backwards and drive PWMB at the absolute MotorB value
+  else if (motBValue < 0) {
+    digitalWrite(INB1, LOW);
+    digitalWrite(INB2, HIGH);
+    analogWrite(PWMB, motBValue);
+  } 
+  else {
+    // Stop motor
+    digitalWrite(INB1, LOW);
+    digitalWrite(INB2, LOW);
+    analogWrite(PWMB, 0);
+  }
+
   delay(10); // Adjust as needed for update rate
 
 }
