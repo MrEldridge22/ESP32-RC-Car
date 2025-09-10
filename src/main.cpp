@@ -11,23 +11,33 @@
 #define JOY_RIGHT_BTN 0
 
 //Adafruit Motor Driver Pins
-#define INA1 34
-#define INA2 35
-#define PWMA 30
-#define INB1 32
-#define INB2 33
-#define PWMB 31
+#define AIN1 9
+#define AIN2 11
+#define PWMA 10
+#define BIN1 21
+#define BIN2 48
+#define PWMB 0
+
+
+// PWM channels for ESP32 LEDC
+#define PWMA_CHANNEL 0
+#define PWMB_CHANNEL 1
+#define PWM_FREQ 1000 // 1 kHz
+#define PWM_RESOLUTION 10 // 10 bits (0-1023)
 
 // Variables to hold motor values
 int motAValue;
 int motBValue;
 
-bool isReceiver = false; // Set to 'true' for Receiver, 'false' for Transmitter
-bool debug = false;  // Set to 'true' to enable debug output on Serial Monitor
+bool isReceiver = true; // Set to 'true' for Receiver, 'false' for Transmitter
+bool debug = true;  // Set to 'true' to enable debug output on Serial Monitor
 bool getMac = false; // Set to 'true' to get the MAC address of the ESP32-S3, false for normal operation
 
 // REPLACE WITH THE MAC Address of your receiver 
-uint8_t broadcastAddress[] = {0xE4, 0xB0, 0x63, 0xAA, 0x9E, 0x78};
+//uint8_t broadcastAddress[] = {0xE4, 0xB0, 0x63, 0xAA, 0x9E, 0x78};
+
+// REPLACE WITH THE MAC Address of your transmitter
+uint8_t broadcastAddress[] = {0xE4, 0xB0, 0x63, 0xAA, 0x9E, 0x74};
 
 // Variable to store if sending data was successful
 String success;
@@ -113,7 +123,7 @@ void loop() {
 
 // Receiver setup function, this is called in the main setup() and replaces the setup() function for the receiver
 void receiverSetup() {
-    // Init ESP-NOW
+  // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
     return;
@@ -121,16 +131,25 @@ void receiverSetup() {
 
   // Register peer
   memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-  peerInfo.channel = 0;  
+  peerInfo.channel = 0;
   peerInfo.encrypt = false;
-  
-  // Add peer        
-  if (esp_now_add_peer(&peerInfo) != ESP_OK){
+
+  // Add peer
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
     Serial.println("Failed to add peer");
     return;
   }
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+  Serial.println("ESP-NOW Receiver Initialized");
+  Serial.println("Starting PWM Setup...");
+  // --- ESP32 PWM Setup ---
+  ledcSetup(PWMA_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+  ledcAttachPin(PWMA, PWMA_CHANNEL);
+  ledcSetup(PWMB_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+  ledcAttachPin(PWMB, PWMB_CHANNEL);
+
+  Serial.println("Receiver Setup Complete");
 }
 
 // Receiver loop function, this is called in the main loop() and replaces the loop() function for the receiver
@@ -143,45 +162,43 @@ void receiverLoop() {
     Serial.println(motBValue);
   }
 
-  // Control Motor A
-  // If motor A is a positive number then set INA1 and INA2  appropriately for forwards and drive PWMA at the MotorA value
-  if (motAValue > 0) {
-    digitalWrite(INA1, HIGH);
-    digitalWrite(INA2, LOW);
-    analogWrite(PWMA, motAValue);
-  } 
-  // If motor A is a negative number then set INA1 and INA2 appropriately for backwards and drive PWMA at the absolute MotorA value
-  else if (motAValue < 0) {
-    digitalWrite(INA1, LOW);
-    digitalWrite(INA2, HIGH);
-    analogWrite(PWMA, motAValue);
-  } 
-  else {
-    // Stop motor
-    digitalWrite(INA1, LOW);
-    digitalWrite(INA2, LOW);
-    analogWrite(PWMA, 0);
-  }
 
-  // Control Motor B
-  // If motor B is a positive number then set INB1 and INB2  appropriately for forwards and drive PWMB at the MotorB value
-  if (motBValue > 0) {
-    digitalWrite(INB1, HIGH);
-    digitalWrite(INB2, LOW);
-    analogWrite(PWMB, motBValue);
-  } 
-  // If motor B is a negative number going in reverse set INB1 and INB2 appropriately for backwards and drive PWMB at the absolute MotorB value
-  else if (motBValue < 0) {
-    digitalWrite(INB1, LOW);
-    digitalWrite(INB2, HIGH);
-    analogWrite(PWMB, motBValue);
-  } 
-  else {
-    // Stop motor
-    digitalWrite(INB1, LOW);
-    digitalWrite(INB2, LOW);
-    analogWrite(PWMB, 0);
-  }
+  // Scale input values from 0-4095 to 0-1023 for 10-bit PWM
+  int motAValuePWM = constrain(abs(motAValue), 0, 4095) >> 2; // divide by 4
+  int motBValuePWM = constrain(abs(motBValue), 0, 4095) >> 2;
+
+  digitalWrite(AIN1, LOW);
+  digitalWrite(AIN2, LOW);
+
+  // // Control Motor A
+  // if (motAValue > 0) {
+  //   digitalWrite(AIN1, HIGH);
+  //   digitalWrite(AIN2, LOW);
+  //   ledcWrite(PWMA_CHANNEL, motAValuePWM);
+  // } else if (motAValue < 0) {
+  //   digitalWrite(AIN1, LOW);
+  //   digitalWrite(AIN2, HIGH);
+  //   ledcWrite(PWMA_CHANNEL, motAValuePWM);
+  // } else {
+  //   digitalWrite(AIN1, LOW);
+  //   digitalWrite(AIN2, LOW);
+  //   ledcWrite(PWMA_CHANNEL, 0);
+  // }
+
+  // // Control Motor B
+  // if (motBValue > 0) {
+  //   digitalWrite(BIN1, HIGH);
+  //   digitalWrite(BIN2, LOW);
+  //   ledcWrite(PWMB_CHANNEL, motBValuePWM);
+  // } else if (motBValue < 0) {
+  //   digitalWrite(BIN1, LOW);
+  //   digitalWrite(BIN2, HIGH);
+  //   ledcWrite(PWMB_CHANNEL, motBValuePWM);
+  // } else {
+  //   digitalWrite(BIN1, LOW);
+  //   digitalWrite(BIN2, LOW);
+  //   ledcWrite(PWMB_CHANNEL, 0);
+  // }
 
   delay(10); // Adjust as needed for update rate
 
