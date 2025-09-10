@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include <SparkFun_TB6612.h>
 
 // Joystick analog pins
 #define JOY_LEFT_Y 5
@@ -14,9 +15,12 @@
 #define AIN1 9
 #define AIN2 11
 #define PWMA 10
-#define BIN1 21
-#define BIN2 48
-#define PWMB 0
+#define BIN1 13
+#define BIN2 14
+#define PWMB 18
+
+const int offsetA = 1;
+const int offsetB = 1;
 
 
 // PWM channels for ESP32 LEDC
@@ -28,6 +32,9 @@
 // Variables to hold motor values
 int motAValue;
 int motBValue;
+
+Motor motorA(AIN1, AIN2, PWMA, offsetA, 7, PWMA_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+Motor motorB(BIN1, BIN2, PWMB, offsetB, 7, PWMB_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
 
 bool isReceiver = true; // Set to 'true' for Receiver, 'false' for Transmitter
 bool debug = true;  // Set to 'true' to enable debug output on Serial Monitor
@@ -142,12 +149,6 @@ void receiverSetup() {
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
   Serial.println("ESP-NOW Receiver Initialized");
-  Serial.println("Starting PWM Setup...");
-  // --- ESP32 PWM Setup ---
-  ledcSetup(PWMA_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-  ledcAttachPin(PWMA, PWMA_CHANNEL);
-  ledcSetup(PWMB_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-  ledcAttachPin(PWMB, PWMB_CHANNEL);
 
   Serial.println("Receiver Setup Complete");
 }
@@ -162,43 +163,9 @@ void receiverLoop() {
     Serial.println(motBValue);
   }
 
-
-  // Scale input values from 0-4095 to 0-1023 for 10-bit PWM
-  int motAValuePWM = constrain(abs(motAValue), 0, 4095) >> 2; // divide by 4
-  int motBValuePWM = constrain(abs(motBValue), 0, 4095) >> 2;
-
-  digitalWrite(AIN1, LOW);
-  digitalWrite(AIN2, LOW);
-
-  // // Control Motor A
-  // if (motAValue > 0) {
-  //   digitalWrite(AIN1, HIGH);
-  //   digitalWrite(AIN2, LOW);
-  //   ledcWrite(PWMA_CHANNEL, motAValuePWM);
-  // } else if (motAValue < 0) {
-  //   digitalWrite(AIN1, LOW);
-  //   digitalWrite(AIN2, HIGH);
-  //   ledcWrite(PWMA_CHANNEL, motAValuePWM);
-  // } else {
-  //   digitalWrite(AIN1, LOW);
-  //   digitalWrite(AIN2, LOW);
-  //   ledcWrite(PWMA_CHANNEL, 0);
-  // }
-
-  // // Control Motor B
-  // if (motBValue > 0) {
-  //   digitalWrite(BIN1, HIGH);
-  //   digitalWrite(BIN2, LOW);
-  //   ledcWrite(PWMB_CHANNEL, motBValuePWM);
-  // } else if (motBValue < 0) {
-  //   digitalWrite(BIN1, LOW);
-  //   digitalWrite(BIN2, HIGH);
-  //   ledcWrite(PWMB_CHANNEL, motBValuePWM);
-  // } else {
-  //   digitalWrite(BIN1, LOW);
-  //   digitalWrite(BIN2, LOW);
-  //   ledcWrite(PWMB_CHANNEL, 0);
-  // }
+  // Drive motors
+  motorA.drive(motAValue);
+  motorB.drive(motBValue);
 
   delay(10); // Adjust as needed for update rate
 
