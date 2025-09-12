@@ -1,11 +1,11 @@
-SparkFun SparkFun Motor Driver - Dual TB6612FNG (1A) Arduino Library (ESP32 Modified)
-===================================================================================
+Adafruit Motor Driver - Dual TB6612FNG (1A) Arduino Library (ESP32 Modified)
+============================================================================
 
-![SparkFun Motor Driver - Dual TB6612FNG (1A)](https://cdn.sparkfun.com//assets/parts/3/1/5/7/09457-01b.jpg)
+![Adafruit Motor Driver - Dual TB6612FNG (1A)](https://cdn-shop.adafruit.com/970x728/2448-02.jpg)
 
-[*SparkFun Motor Driver - Dual TB6612FNG (1A) (ROB-0457)*](https://www.sparkfun.com/products/9457)
+[*Adafruit Motor Driver - Dual TB6612FNG (1A) (Product ID: 2448)*](https://www.adafruit.com/product/2448)
 
-**This is a modified version of the original SparkFun TB6612FNG library, optimized for ESP32 microcontrollers.**
+**This is a modified version of the original SparkFun TB6612FNG library, optimized for ESP32 microcontrollers and adapted for the Adafruit Motor Driver.**
 
 The TB6612FNG motor driver can control up to two DC motors at a constant current of 1.2A (3.2A peak). 
 Two input signals (IN1 and IN2) can be used to control the motor in one of four function modes - CW, CCW, short-brake, and stop. 
@@ -32,7 +32,7 @@ Motor(int In1pin, int In2pin, int PWMpin, int offset, int STBYpin,
 ```cpp
 #include <SparkFun_TB6612.h>
 
-// Motor pin definitions
+// Motor pin definitions for Adafruit TB6612FNG
 #define AIN1 9
 #define AIN2 11
 #define PWMA 10
@@ -78,27 +78,17 @@ void loop() {
 - **Safe PWM Pins**: 2, 4, 5, 9, 10, 11, 13, 14, 15, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33
 - **Avoid**: GPIO 12 (flash voltage), GPIO 35-39 (input-only)
 
-Repository Contents
--------------------
-
-* **/examples** - Example sketches for the library (.ino). Run these from the Arduino IDE. 
-* **/extras** - Additional documentation for the user. These files are ignored by the IDE. 
-* **/src** - Source files for the library (.cpp, .h).
-* **keywords.txt** - Keywords from this library that will be highlighted in the Arduino IDE. 
-* **library.properties** - General library properties for the Arduino package manager. 
-
 Documentation
 --------------
 
 * **[Installing an Arduino Library Guide](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)** - Basic information on how to install an Arduino library.
-* **[Product Repository](https://github.com/sparkfun/Motor_Driver-Dual_TB6612FNG/tree/V_1.1)** - Main repository (including hardware files) for the TB6612FNG Motor Driver.
-* **[Hookup Guide](https://learn.sparkfun.com/tutorials/tb6612fng-hookup-guide)** - Basic hookup guide for the TB6612FNG Motor Driver.
+* **[Adafruit TB6612FNG Product Page](https://www.adafruit.com/product/2448)** - Main product page for the Adafruit TB6612FNG Motor Driver.
+* **[TB6612FNG Datasheet](https://cdn-shop.adafruit.com/datasheets/TB6612FNG_datasheet_en_20121101.pdf)** - Technical specifications and wiring information.
 
 Products that use this Library 
 ---------------------------------
 
-* [ROB-09457](https://www.sparkfun.com/products/9457)- Motor Driver
-* [ROB-13845](https://www.sparkfun.com/products/13845)- Motor Driver with headers installed
+* [Adafruit Motor Driver - Dual TB6612FNG (Product ID: 2448)](https://www.adafruit.com/product/2448) - Adafruit Motor Driver
 
 
 License Information
@@ -113,5 +103,3 @@ If you have any questions or concerns on licensing, please contact techsupport@s
 Distributed as-is; no warranty is given.
 
 -Your friends at SparkFun.
-
-

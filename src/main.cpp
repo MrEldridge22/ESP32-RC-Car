@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <esp_now.h>
 #include <WiFi.h>
-#include <SparkFun_TB6612.h>
+#include <ESP32_Adafruit_TB6612.h>
 
 // Joystick analog pins
 #define JOY_LEFT_Y 5
@@ -9,11 +9,11 @@
 #define JOY_LEFT_BTN 4
 #define JOY_RIGHT_Y 1
 #define JOY_RIGHT_X 2
-#define JOY_RIGHT_BTN 0
+#define JOY_RIGHT_BTN 38
 
 //Adafruit Motor Driver Pins
-#define AIN1 9
-#define AIN2 46
+#define AIN1 10
+#define AIN2 9
 #define PWMA 3
 #define BIN1 21
 #define BIN2 45
@@ -33,8 +33,8 @@ const int offsetB = 1;
 int motAValue;
 int motBValue;
 
-Motor motorA(AIN1, AIN2, PWMA, offsetA, 7, PWMA_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
-Motor motorB(BIN1, BIN2, PWMB, offsetB, 7, PWMB_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+Motor motorA(AIN1, AIN2, PWMA, offsetA, PWMA_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+Motor motorB(BIN1, BIN2, PWMB, offsetB, PWMB_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
 
 bool isReceiver = true; // Set to 'true' for Receiver, 'false' for Transmitter
 bool debug = true;  // Set to 'true' to enable debug output on Serial Monitor

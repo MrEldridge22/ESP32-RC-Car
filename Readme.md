@@ -19,13 +19,12 @@ There is also a Autodesk Fusion Project Archive (ESP32 RC Car.f3d) which has the
 ## Project Structure
 - `src/` - Main source code for the car's firmware
 - `lib/` - Additional libraries (if any)
-- `include/` - Header files
-- `test/` - Test code
+  - `ESP32_Adafruit_TB6612/` - Modified TB6612FNG motor driver library for ESP32, based on the original SparkFun TB6612FNG Breakout board library
 - `platformio.ini` - PlatformIO project configuration
 
 ## Getting Started
 1. **Hardware Required:**
-   - 2x ESP32-S3 development board (1 for the Car and 1 for the Receiver)
+   - 2x ESP32-S3 development board (1 for the Car and 1 for the Receiver), this will also work with the ESP32-S2-Solo
    - Adafruit TB6612 1.2A DC/Stepper Motor Driver Breakout Board
    - RC car chassis with motors
    - Power supply (battery)
