@@ -13,11 +13,11 @@
 
 //Adafruit Motor Driver Pins
 #define AIN1 9
-#define AIN2 11
-#define PWMA 10
-#define BIN1 13
-#define BIN2 14
-#define PWMB 18
+#define AIN2 46
+#define PWMA 3
+#define BIN1 21
+#define BIN2 45
+#define PWMB 0
 
 const int offsetA = 1;
 const int offsetB = 1;
